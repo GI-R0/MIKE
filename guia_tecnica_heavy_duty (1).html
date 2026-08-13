@@ -12,17 +12,17 @@
     --bg: #090b0e;
     --panel: #12161f;
     --panel-hover: #171d29;
-    --green: #10b981;
-    --green-bright: #34d399;
-    --green-dim: rgba(16, 185, 129, 0.12);
-    --green-border: rgba(16, 185, 129, 0.3);
+    --gold: #f59e0b;
+    --gold-bright: #fbbf24;
+    --gold-dim: rgba(245, 158, 11, 0.12);
+    --gold-border: rgba(245, 158, 11, 0.35);
     --text: #f3f4f6;
     --text-dim: #9ca3af;
     --border: #1f2937;
     --border-light: #2d3748;
-    --warning-bg: rgba(245, 158, 11, 0.12);
-    --warning-border: rgba(245, 158, 11, 0.4);
-    --warning-text: #fbbf24;
+    --warning-bg: rgba(239, 68, 68, 0.12);
+    --warning-border: rgba(239, 68, 68, 0.4);
+    --warning-text: #f87171;
     --card-radius: 14px;
   }
 
@@ -50,7 +50,7 @@
   }
 
   header .eyebrow {
-    color: var(--green);
+    color: var(--gold);
     font-size: 12px;
     font-weight: 700;
     letter-spacing: 0.12em;
@@ -99,17 +99,17 @@
     border-color: var(--border-light);
   }
   .tab.active {
-    background: var(--green);
-    color: #04120d;
-    border-color: var(--green);
+    background: var(--gold);
+    color: #120e04;
+    border-color: var(--gold);
     font-weight: 700;
-    box-shadow: 0 0 15px rgba(16, 185, 129, 0.25);
+    box-shadow: 0 0 15px rgba(245, 158, 11, 0.3);
   }
 
   .reminder {
     margin: 16px 20px 0 20px;
     background: var(--panel);
-    border: 1px solid var(--green-border);
+    border: 1px solid var(--gold-border);
     border-radius: 14px;
     padding: 14px 16px;
     display: flex;
@@ -119,20 +119,20 @@
   }
   .reminder.wait-mode {
     border-color: var(--warning-border);
-    background: rgba(23, 20, 15, 0.9);
+    background: rgba(26, 16, 16, 0.9);
   }
   .reminder .dot {
     width: 10px;
     height: 10px;
     border-radius: 50%;
-    background: var(--green);
+    background: var(--gold);
     flex: 0 0 auto;
     margin-top: 4px;
-    box-shadow: 0 0 8px var(--green);
+    box-shadow: 0 0 8px var(--gold);
   }
   .reminder.wait-mode .dot {
-    background: #f59e0b;
-    box-shadow: 0 0 8px #f59e0b;
+    background: #ef4444;
+    box-shadow: 0 0 8px #ef4444;
   }
   .reminder-text {
     font-size: 13px;
@@ -196,14 +196,14 @@
     width: 30px;
     height: 30px;
     border-radius: 50%;
-    background: var(--green-dim);
-    color: var(--green-bright);
+    background: var(--gold-dim);
+    color: var(--gold-bright);
     font-size: 13px;
     font-weight: 800;
     display: flex;
     align-items: center;
     justify-content: center;
-    border: 1px solid var(--green-border);
+    border: 1px solid var(--gold-border);
   }
 
   .card-head-text { min-width: 0; }
@@ -222,11 +222,11 @@
 
   .ex-meta {
     font-size: 12px;
-    color: var(--green-bright);
+    color: var(--gold-bright);
     margin-top: 3px;
     font-weight: 600;
   }
-  .card.done .ex-meta { color: #4b5563; }
+  .card.done .ex-meta { color: #5a4b37; }
 
   .card-actions {
     display: flex;
@@ -252,13 +252,13 @@
     background: #0b0f17;
   }
   .done-toggle:hover {
-    border-color: var(--green);
+    border-color: var(--gold);
   }
   .done-toggle.checked {
-    background: var(--green);
-    border-color: var(--green);
-    color: #04120d;
-    box-shadow: 0 0 10px rgba(16, 185, 129, 0.3);
+    background: var(--gold);
+    border-color: var(--gold);
+    color: #120e04;
+    box-shadow: 0 0 10px rgba(245, 158, 11, 0.35);
   }
 
   .chevron {
@@ -329,7 +329,7 @@
   .progress-percent {
     font-size: 12px;
     font-weight: 800;
-    color: var(--green-bright);
+    color: var(--gold-bright);
   }
 
   .progress-bar {
@@ -343,7 +343,7 @@
   .progress-fill {
     height: 100%;
     width: 0%;
-    background: linear-gradient(90deg, var(--green), var(--green-bright));
+    background: linear-gradient(90deg, var(--gold), var(--gold-bright));
     border-radius: 999px;
     transition: width 0.3s ease;
   }
@@ -359,8 +359,8 @@
     padding: 13px;
     border-radius: 10px;
     border: none;
-    background: var(--green);
-    color: #04120d;
+    background: var(--gold);
+    color: #120e04;
     font-size: 13.5px;
     font-weight: 800;
     cursor: pointer;
@@ -368,12 +368,12 @@
     font-family: inherit;
   }
   .finish-btn:hover:not(:disabled) {
-    background: var(--green-bright);
-    box-shadow: 0 0 15px rgba(16, 185, 129, 0.4);
+    background: var(--gold-bright);
+    box-shadow: 0 0 15px rgba(245, 158, 11, 0.4);
   }
   .finish-btn:disabled {
-    background: #182420;
-    color: #4b5563;
+    background: #241d14;
+    color: #6b5a45;
     cursor: not-allowed;
   }
 
@@ -397,14 +397,14 @@
 
   .note-strip {
     margin: 24px 0 0 0;
-    background: rgba(16, 185, 129, 0.08);
-    border: 1px solid var(--green-border);
+    background: rgba(245, 158, 11, 0.08);
+    border: 1px solid var(--gold-border);
     border-radius: var(--card-radius);
     padding: 16px;
   }
 
   .note-strip h3 {
-    color: var(--green-bright);
+    color: var(--gold-bright);
     font-size: 12px;
     text-transform: uppercase;
     letter-spacing: 0.08em;
