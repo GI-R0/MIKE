@@ -417,6 +417,177 @@
     font-size: 13px;
     line-height: 1.6;
   }
+
+  /* ---- Calendar Styles ---- */
+  .calendar-card {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: var(--card-radius);
+    padding: 20px;
+    margin-bottom: 20px;
+  }
+
+  .calendar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+  }
+
+  .calendar-title {
+    font-size: 16px;
+    font-weight: 800;
+    color: var(--text);
+    text-transform: capitalize;
+  }
+
+  .cal-nav-btn {
+    background: var(--panel-hover);
+    border: 1px solid var(--border-light);
+    color: var(--text);
+    width: 34px;
+    height: 34px;
+    border-radius: 8px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    transition: all 0.2s ease;
+  }
+  .cal-nav-btn:hover {
+    background: var(--gold-dim);
+    border-color: var(--gold-border);
+    color: var(--gold-bright);
+  }
+
+  .calendar-weekdays {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    text-align: center;
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+
+  .calendar-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 6px;
+  }
+
+  .cal-day {
+    aspect-ratio: 1;
+    min-height: 46px;
+    border-radius: 10px;
+    background: rgba(18, 22, 31, 0.6);
+    border: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-dim);
+    position: relative;
+    transition: all 0.2s ease;
+  }
+
+  .cal-day.empty {
+    background: transparent;
+    border-color: transparent;
+  }
+
+  .cal-day.today {
+    border-color: var(--gold);
+    color: #ffffff;
+    font-weight: 800;
+  }
+
+  .cal-day.has-workout {
+    background: var(--gold-dim);
+    border-color: var(--gold-border);
+    color: var(--gold-bright);
+    font-weight: 800;
+  }
+
+  .cal-day-badge {
+    font-size: 9px;
+    font-weight: 800;
+    padding: 2px 4px;
+    border-radius: 4px;
+    background: var(--gold);
+    color: #120e04;
+    margin-top: 3px;
+    line-height: 1;
+  }
+
+  .history-section {
+    margin-top: 24px;
+  }
+
+  .history-title {
+    font-size: 12px;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    font-weight: 700;
+    margin-bottom: 12px;
+  }
+
+  .history-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .history-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 14px;
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+  }
+
+  .history-info {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .history-tag {
+    font-size: 11px;
+    font-weight: 800;
+    padding: 4px 8px;
+    border-radius: 6px;
+    background: var(--gold);
+    color: #120e04;
+    white-space: nowrap;
+  }
+
+  .history-date {
+    font-size: 13px;
+    color: #e5e7eb;
+    font-weight: 600;
+  }
+
+  .history-del-btn {
+    background: transparent;
+    border: none;
+    color: #ef4444;
+    cursor: pointer;
+    font-size: 16px;
+    padding: 4px 8px;
+    border-radius: 6px;
+    transition: background 0.15s ease;
+  }
+  .history-del-btn:hover {
+    background: rgba(239, 68, 68, 0.15);
+  }
 </style>
 </head>
 <body>
@@ -431,6 +602,7 @@
   <button class="tab active" data-day="1" role="tab" aria-selected="true">Día 1 · Pecho / Espalda</button>
   <button class="tab" data-day="2" role="tab" aria-selected="false">Día 2 · Pierna</button>
   <button class="tab" data-day="3" role="tab" aria-selected="false">Día 3 · Hombro / Brazos</button>
+  <button class="tab" data-day="cal" role="tab" aria-selected="false">📅 Calendario</button>
 </div>
 
 <div class="reminder" id="reminder-banner">
@@ -828,6 +1000,26 @@
     </div>
   </div>
 
+  <!-- CALENDARIO TAB -->
+  <div class="day-block" id="day-cal">
+    <div class="calendar-card">
+      <div class="calendar-header">
+        <button class="cal-nav-btn" onclick="changeCalMonth(-1)">‹</button>
+        <div class="calendar-title" id="cal-month-title">Agosto 2026</div>
+        <button class="cal-nav-btn" onclick="changeCalMonth(1)">›</button>
+      </div>
+      <div class="calendar-weekdays">
+        <div>Lun</div><div>Mar</div><div>Mié</div><div>Jue</div><div>Vie</div><div>Sáb</div><div>Dom</div>
+      </div>
+      <div class="calendar-grid" id="cal-grid"></div>
+    </div>
+
+    <div class="history-section">
+      <div class="history-title">Historial de Entrenamientos Registrados</div>
+      <div class="history-list" id="history-list"></div>
+    </div>
+  </div>
+
   <div class="note-strip">
     <h3>Principio Heavy Duty</h3>
     <p>Llega al fallo muscular real en cada serie de trabajo. Prioriza la fase negativa (bajada lenta de 4 segundos), pues es la que estimula mayor adaptación y fortalece tendones. Entrena solo cuando estés 100% recuperado, nunca por calendario fijo.</p>
@@ -851,6 +1043,10 @@
       tab.setAttribute('aria-selected', 'true');
       const targetBlock = document.getElementById('day-' + tab.dataset.day);
       if (targetBlock) targetBlock.classList.add('active');
+
+      if (tab.dataset.day === 'cal') {
+        renderCalendar();
+      }
     });
   });
 
@@ -862,26 +1058,22 @@
     });
   });
 
-  // ---- State & Storage Management (Standard localStorage) ----
+  // ---- State & Storage Management ----
   const DAY_EXERCISES = { 1: [1,2,3,4], 2: [5,6,7,8], 3: [9,10,11,12,13] };
-  let checkedState = {};   // { "1": true/false, ... }
-  let lastDayLog = {};     // { "1": "YYYY-MM-DD", "2": "...", "3": "..." }
+  const DAY_NAMES = { 1: "Pecho / Espalda", 2: "Pierna", 3: "Hombro / Brazos" };
+
+  let checkedState = {};    // { "1": true/false, ... }
+  let lastDayLog = {};      // { "1": "YYYY-MM-DD", ... }
+  let workoutHistory = [];  // [ { id: number, day: number, date: "YYYY-MM-DD" }, ... ]
+
+  let currentCalDate = new Date();
 
   function getStorageItem(key) {
-    try {
-      return localStorage.getItem(key);
-    } catch (e) {
-      console.warn('localStorage no disponible:', e);
-      return null;
-    }
+    try { return localStorage.getItem(key); } catch (e) { return null; }
   }
 
   function setStorageItem(key, val) {
-    try {
-      localStorage.setItem(key, val);
-    } catch (e) {
-      console.warn('No se pudo guardar en localStorage:', e);
-    }
+    try { localStorage.setItem(key, val); } catch (e) {}
   }
 
   function loadState() {
@@ -891,9 +1083,13 @@
     const rawLog = getStorageItem('heavy-duty-last-day-log');
     lastDayLog = rawLog ? JSON.parse(rawLog) : {};
 
+    const rawHist = getStorageItem('heavy-duty-workout-history');
+    workoutHistory = rawHist ? JSON.parse(rawHist) : [];
+
     applyCheckedState();
     updateAllProgress();
     updateReminder();
+    renderCalendar();
   }
 
   function applyCheckedState() {
@@ -906,13 +1102,9 @@
     });
   }
 
-  function saveChecked() {
-    setStorageItem('heavy-duty-checked-exercises', JSON.stringify(checkedState));
-  }
-
-  function saveDayLog() {
-    setStorageItem('heavy-duty-last-day-log', JSON.stringify(lastDayLog));
-  }
+  function saveChecked() { setStorageItem('heavy-duty-checked-exercises', JSON.stringify(checkedState)); }
+  function saveDayLog() { setStorageItem('heavy-duty-last-day-log', JSON.stringify(lastDayLog)); }
+  function saveHistory() { setStorageItem('heavy-duty-workout-history', JSON.stringify(workoutHistory)); }
 
   function toggleDone(id, btn) {
     const card = document.getElementById('card-' + id);
@@ -947,6 +1139,14 @@
     lastDayLog[day] = todayISO;
     saveDayLog();
 
+    // Add to workout history log
+    workoutHistory.unshift({
+      id: Date.now(),
+      day: parseInt(day),
+      date: todayISO
+    });
+    saveHistory();
+
     // Reset day's checkboxes for next session
     DAY_EXERCISES[day].forEach(id => {
       checkedState[id] = false;
@@ -958,6 +1158,7 @@
     saveChecked();
     updateAllProgress();
     updateReminder();
+    renderCalendar();
 
     const btnEl = document.getElementById('finish-' + day);
     if (btnEl) {
@@ -981,6 +1182,12 @@
     updateAllProgress();
   }
 
+  function deleteHistoryItem(id) {
+    workoutHistory = workoutHistory.filter(item => item.id !== id);
+    saveHistory();
+    renderCalendar();
+  }
+
   function daysSince(dateStr) {
     const then = new Date(dateStr + 'T00:00:00');
     const now = new Date();
@@ -999,14 +1206,13 @@
       return;
     }
 
-    // Find the most recently completed day overall
     let lastDay = null, lastDate = null;
     entries.forEach(([day, date]) => {
       if (!lastDate || date > lastDate) { lastDate = date; lastDay = day; }
     });
 
     const gap = daysSince(lastDate);
-    const MIN_REST = 2; // Heavy Duty: mínimo 48 horas (2 días completos)
+    const MIN_REST = 2;
 
     if (gap < MIN_REST) {
       bannerEl.classList.add('wait-mode');
@@ -1016,6 +1222,94 @@
       bannerEl.classList.remove('wait-mode');
       textEl.innerHTML = 'Último entreno: <b>Día ' + lastDay + '</b> (hace ' + gap + ' días). Cumpliste el descanso mínimo. Si te sientes completamente recuperado, ¡puedes entrenar hoy!';
     }
+  }
+
+  // ---- Calendar Render Logic ----
+  function changeCalMonth(delta) {
+    currentCalDate.setMonth(currentCalDate.getMonth() + delta);
+    renderCalendar();
+  }
+
+  function renderCalendar() {
+    const year = currentCalDate.getFullYear();
+    const month = currentCalDate.getMonth();
+
+    const monthNames = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"];
+    const monthTitle = document.getElementById('cal-month-title');
+    if (monthTitle) monthTitle.textContent = monthNames[month] + " " + year;
+
+    const gridEl = document.getElementById('cal-grid');
+    if (!gridEl) return;
+    gridEl.innerHTML = '';
+
+    // First day of month (0 = Sunday, 1 = Monday...) -> shift so Monday is 0
+    const firstDayIndex = (new Date(year, month, 1).getDay() + 6) % 7;
+    const totalDays = new Date(year, month + 1, 0).getDate();
+
+    const todayISO = new Date().toISOString().slice(0, 10);
+
+    // Render empty slots for days before start of month
+    for (let i = 0; i < firstDayIndex; i++) {
+      const emptyDiv = document.createElement('div');
+      emptyDiv.className = 'cal-day empty';
+      gridEl.appendChild(emptyDiv);
+    }
+
+    // Render days of the month
+    for (let day = 1; day <= totalDays; day++) {
+      const dayStr = day < 10 ? '0' + day : '' + day;
+      const monthStr = (month + 1) < 10 ? '0' + (month + 1) : '' + (month + 1);
+      const dateISO = year + '-' + monthStr + '-' + dayStr;
+
+      const dayDiv = document.createElement('div');
+      dayDiv.className = 'cal-day';
+      if (dateISO === todayISO) dayDiv.classList.add('today');
+
+      // Check if workout happened on this date
+      const workouts = workoutHistory.filter(w => w.date === dateISO);
+      if (workouts.length > 0) {
+        dayDiv.classList.add('has-workout');
+        dayDiv.innerHTML = '<div>' + day + '</div>';
+        workouts.forEach(w => {
+          const badge = document.createElement('div');
+          badge.className = 'cal-day-badge';
+          badge.textContent = 'D' + w.day;
+          dayDiv.appendChild(badge);
+        });
+      } else {
+        dayDiv.textContent = day;
+      }
+
+      gridEl.appendChild(dayDiv);
+    }
+
+    // Render History List
+    const historyListEl = document.getElementById('history-list');
+    if (historyListEl) {
+      historyListEl.innerHTML = '';
+      if (workoutHistory.length === 0) {
+        historyListEl.innerHTML = '<div style="font-size:13px; color:var(--text-dim); text-align:center; padding:16px;">No hay entrenamientos registrados aún.</div>';
+      } else {
+        workoutHistory.forEach(item => {
+          const itemEl = document.createElement('div');
+          itemEl.className = 'history-item';
+          itemEl.innerHTML = `
+            <div class="history-info">
+              <span class="history-tag">Día ${item.day}</span>
+              <span class="history-date">${formatDateSpanish(item.date)} — ${DAY_NAMES[item.day] || ''}</span>
+            </div>
+            <button class="history-del-btn" onclick="deleteHistoryItem(${item.id})" title="Eliminar registro">✕</button>
+          `;
+          historyListEl.appendChild(itemEl);
+        });
+      }
+    }
+  }
+
+  function formatDateSpanish(dateISO) {
+    const [y, m, d] = dateISO.split('-');
+    const months = ["ene", "feb", "mar", "abr", "may", "jun", "jul", "ago", "sep", "oct", "nov", "dic"];
+    return `${parseInt(d)} ${months[parseInt(m) - 1]} ${y}`;
   }
 
   // Initialize on load
