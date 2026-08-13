@@ -1557,10 +1557,46 @@
   });
 
   // Accordion handling
-  document.querySelectorAll('.card-head').forEach(head => {
-    head.addEventListener('click', () => {
-      const card = head.closest('.card');
-      if (card) card.classList.toggle('open');
+  document.querySelectorAll('.card-head').forEach((head, index) => {
+    const card = head.closest('.card');
+    const body = card ? card.querySelector('.card-body') : null;
+
+    head.setAttribute('role', 'button');
+    head.setAttribute('tabindex', '0');
+
+    if (body) {
+      if (!body.id) body.id = 'card-body-' + (index + 1);
+      head.setAttribute('aria-controls', body.id);
+      head.setAttribute('aria-expanded', card.classList.contains('open') ? 'true' : 'false');
+    }
+
+    const toggleCard = () => {
+      if (!card) return;
+      card.classList.toggle('open');
+      head.setAttribute('aria-expanded', card.classList.contains('open') ? 'true' : 'false');
+    };
+
+    head.addEventListener('click', toggleCard);
+    head.addEventListener('keydown', (event) => {
+      if (event.key === 'Enter' || event.key === ' ') {
+        event.preventDefault();
+        toggleCard();
+      }
+    });
+  });
+
+  document.querySelectorAll('.done-toggle').forEach(btn => {
+    btn.setAttribute('role', 'button');
+    btn.setAttribute('tabindex', '0');
+    btn.setAttribute('aria-pressed', btn.classList.contains('checked') ? 'true' : 'false');
+
+    btn.addEventListener('keydown', (event) => {
+      if (event.key === 'Enter' || event.key === ' ') {
+        event.preventDefault();
+        event.stopPropagation();
+        const id = Number(btn.dataset.ex);
+        if (Number.isFinite(id)) toggleDone(id, btn);
+      }
     });
   });
 
@@ -1583,15 +1619,48 @@
     try { localStorage.setItem(key, val); } catch (e) {}
   }
 
+  function safeParseJSON(raw, fallback) {
+    if (!raw) return fallback;
+    try {
+      const parsed = JSON.parse(raw);
+      return parsed ?? fallback;
+    } catch (e) {
+      return fallback;
+    }
+  }
+
+  function isPlainObject(value) {
+    return value !== null && typeof value === 'object' && !Array.isArray(value);
+  }
+
+  function normalizeWorkoutHistory(value) {
+    if (!Array.isArray(value)) return [];
+    return value
+      .filter(item => {
+        if (!isPlainObject(item)) return false;
+        const validDay = item.day === 1 || item.day === 2 || item.day === 3;
+        const validDate = typeof item.date === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(item.date);
+        return validDay && validDate;
+      })
+      .map((item, index) => ({
+        id: Number.isFinite(item.id) ? item.id : Date.now() + index,
+        day: item.day,
+        date: item.date
+      }));
+  }
+
   function loadState() {
     const rawChecked = getStorageItem('heavy-duty-checked-exercises');
-    checkedState = rawChecked ? JSON.parse(rawChecked) : {};
+    const parsedChecked = safeParseJSON(rawChecked, {});
+    checkedState = isPlainObject(parsedChecked) ? parsedChecked : {};
 
     const rawLog = getStorageItem('heavy-duty-last-day-log');
-    lastDayLog = rawLog ? JSON.parse(rawLog) : {};
+    const parsedLog = safeParseJSON(rawLog, {});
+    lastDayLog = isPlainObject(parsedLog) ? parsedLog : {};
 
     const rawHist = getStorageItem('heavy-duty-workout-history');
-    workoutHistory = rawHist ? JSON.parse(rawHist) : [];
+    const parsedHistory = safeParseJSON(rawHist, []);
+    workoutHistory = normalizeWorkoutHistory(parsedHistory);
 
     applyCheckedState();
     updateAllProgress();
@@ -1606,7 +1675,10 @@
       const card = document.getElementById('card-' + id);
       const btn = document.querySelector('.done-toggle[data-ex="' + id + '"]');
       if (card) card.classList.toggle('done', isDone);
-      if (btn) btn.classList.toggle('checked', isDone);
+      if (btn) {
+        btn.classList.toggle('checked', isDone);
+        btn.setAttribute('aria-pressed', isDone ? 'true' : 'false');
+      }
     });
   }
 
@@ -1624,6 +1696,7 @@
     if (targetTab) { targetTab.classList.add('active'); targetTab.setAttribute('aria-selected', 'true'); }
     if (targetBlock) targetBlock.classList.add('active');
     if (dayId === 'cal') renderCalendar();
+    if (dayId === 'home') updateHomeStats();
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
@@ -1706,6 +1779,7 @@
     const card = document.getElementById('card-' + id);
     const isChecked = btn.classList.toggle('checked');
     if (card) card.classList.toggle('done', isChecked);
+    btn.setAttribute('aria-pressed', isChecked ? 'true' : 'false');
     checkedState[id] = isChecked;
     saveChecked();
     updateAllProgress();
@@ -1751,11 +1825,15 @@
       const card = document.getElementById('card-' + id);
       const btn = document.querySelector('.done-toggle[data-ex="' + id + '"]');
       if (card) card.classList.remove('done');
-      if (btn) btn.classList.remove('checked');
+      if (btn) {
+        btn.classList.remove('checked');
+        btn.setAttribute('aria-pressed', 'false');
+      }
     });
     saveChecked();
     updateAllProgress();
     updateReminder();
+    updateHomeStats();
     renderCalendar();
 
     const btnEl = document.getElementById('finish-' + day);
@@ -1774,7 +1852,10 @@
       const card = document.getElementById('card-' + id);
       const btn = document.querySelector('.done-toggle[data-ex="' + id + '"]');
       if (card) card.classList.remove('done');
-      if (btn) btn.classList.remove('checked');
+      if (btn) {
+        btn.classList.remove('checked');
+        btn.setAttribute('aria-pressed', 'false');
+      }
     });
     saveChecked();
     updateAllProgress();
@@ -1784,6 +1865,7 @@
     workoutHistory = workoutHistory.filter(item => item.id !== id);
     saveHistory();
     updateReminder();
+    updateHomeStats();
     renderCalendar();
   }
 
@@ -1879,6 +1961,7 @@
 
     closeFicharModal();
     updateReminder();
+    updateHomeStats();
     renderCalendar();
   }
 
@@ -1888,6 +1971,7 @@
     saveHistory();
     closeFicharModal();
     updateReminder();
+    updateHomeStats();
     renderCalendar();
   }
 
