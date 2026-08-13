@@ -632,6 +632,171 @@
     background: rgba(239, 68, 68, 0.15);
   }
 
+  /* ---- Home / Inicio Styles ---- */
+  .home-hero {
+    background: linear-gradient(135deg, rgba(245,158,11,0.15), rgba(245,158,11,0.04));
+    border: 1px solid var(--gold-border);
+    border-radius: 16px;
+    padding: 22px 20px;
+    margin-bottom: 16px;
+    text-align: center;
+  }
+
+  .home-hero-icon {
+    font-size: 36px;
+    margin-bottom: 8px;
+    display: block;
+  }
+
+  .home-hero-title {
+    font-size: 20px;
+    font-weight: 800;
+    color: var(--text);
+    letter-spacing: -0.01em;
+    margin-bottom: 4px;
+  }
+
+  .home-hero-sub {
+    font-size: 13px;
+    color: var(--text-dim);
+    line-height: 1.5;
+  }
+
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+
+  .stat-card {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 16px 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    transition: border-color 0.2s ease;
+  }
+  .stat-card:hover { border-color: var(--border-light); }
+
+  .stat-label {
+    font-size: 11px;
+    color: var(--text-dim);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+
+  .stat-value {
+    font-size: 24px;
+    font-weight: 800;
+    color: var(--gold-bright);
+    line-height: 1.1;
+  }
+
+  .stat-sub {
+    font-size: 11px;
+    color: var(--text-dim);
+  }
+
+  .quick-launch-title {
+    font-size: 12px;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    font-weight: 700;
+    margin-bottom: 12px;
+  }
+
+  .quick-launch-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+
+  .quick-btn {
+    width: 100%;
+    padding: 14px 16px;
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    color: var(--text);
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    transition: all 0.2s ease;
+    font-family: inherit;
+    text-align: left;
+  }
+  .quick-btn:hover {
+    background: var(--gold-dim);
+    border-color: var(--gold-border);
+    color: var(--gold-bright);
+  }
+
+  .quick-btn-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .quick-btn-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    background: var(--gold-dim);
+    border: 1px solid var(--gold-border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    flex: 0 0 auto;
+  }
+
+  .quick-btn-meta {
+    font-size: 11px;
+    color: var(--text-dim);
+    font-weight: 500;
+    margin-top: 2px;
+  }
+
+  .streak-banner {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 16px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 16px;
+  }
+
+  .streak-icon {
+    font-size: 28px;
+    flex: 0 0 auto;
+  }
+
+  .streak-label {
+    font-size: 11px;
+    color: var(--text-dim);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+
+  .streak-value {
+    font-size: 15px;
+    font-weight: 800;
+    color: var(--text);
+    margin-top: 2px;
+  }
+
   /* ---- Modal de Fichaje ---- */
   .modal-overlay {
     display: none;
@@ -723,7 +888,8 @@
 </header>
 
 <div class="tabs" role="tablist">
-  <button class="tab active" data-day="1" role="tab" aria-selected="true">Día 1 · Pecho / Espalda</button>
+  <button class="tab active" data-day="home" role="tab" aria-selected="true">🏠 Inicio</button>
+  <button class="tab" data-day="1" role="tab" aria-selected="false">Día 1 · Pecho / Espalda</button>
   <button class="tab" data-day="2" role="tab" aria-selected="false">Día 2 · Pierna</button>
   <button class="tab" data-day="3" role="tab" aria-selected="false">Día 3 · Hombro / Brazos</button>
   <button class="tab" data-day="cal" role="tab" aria-selected="false">📅 Calendario</button>
@@ -736,8 +902,94 @@
 
 <main>
 
+  <!-- HOME -->
+  <div class="day-block active" id="day-home">
+
+    <div class="home-hero">
+      <span class="home-hero-icon">💪</span>
+      <div class="home-hero-title">Heavy Duty Tracker</div>
+      <div class="home-hero-sub">Entrena con máxima intensidad.<br>Descansa con máxima consciencia.</div>
+    </div>
+
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-label">Total Sesiones</div>
+        <div class="stat-value" id="stat-total">0</div>
+        <div class="stat-sub">registradas</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Días de Descanso</div>
+        <div class="stat-value" id="stat-rest">—</div>
+        <div class="stat-sub" id="stat-rest-sub">desde el último entreno</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Día Más Entrenado</div>
+        <div class="stat-value" id="stat-fav">—</div>
+        <div class="stat-sub" id="stat-fav-sub">en tu historial</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Esta Semana</div>
+        <div class="stat-value" id="stat-week">0</div>
+        <div class="stat-sub">sesiones completadas</div>
+      </div>
+    </div>
+
+    <div class="streak-banner" id="home-reminder">
+      <div class="streak-icon" id="home-reminder-icon">⏳</div>
+      <div>
+        <div class="streak-label" id="home-reminder-label">Estado de Recuperación</div>
+        <div class="streak-value" id="home-reminder-value">Calculando...</div>
+      </div>
+    </div>
+
+    <div class="quick-launch-title">Ir a Entrenamiento</div>
+    <div class="quick-launch-grid">
+      <button class="quick-btn" onclick="goToDay('1')">
+        <div class="quick-btn-left">
+          <div class="quick-btn-icon">🫁</div>
+          <div>
+            <div>Día 1 — Pecho / Espalda</div>
+            <div class="quick-btn-meta">4 ejercicios · Pre-agotamiento + compuesto</div>
+          </div>
+        </div>
+        <span>→</span>
+      </button>
+      <button class="quick-btn" onclick="goToDay('2')">
+        <div class="quick-btn-left">
+          <div class="quick-btn-icon">🦵</div>
+          <div>
+            <div>Día 2 — Pierna</div>
+            <div class="quick-btn-meta">4 ejercicios · Cuádriceps, isquios, gemelos</div>
+          </div>
+        </div>
+        <span>→</span>
+      </button>
+      <button class="quick-btn" onclick="goToDay('3')">
+        <div class="quick-btn-left">
+          <div class="quick-btn-icon">💪</div>
+          <div>
+            <div>Día 3 — Hombro / Brazos</div>
+            <div class="quick-btn-meta">5 ejercicios · Hombro, bíceps, tríceps, manguito</div>
+          </div>
+        </div>
+        <span>→</span>
+      </button>
+      <button class="quick-btn" onclick="goToDay('cal')">
+        <div class="quick-btn-left">
+          <div class="quick-btn-icon">📅</div>
+          <div>
+            <div>Ver Calendario</div>
+            <div class="quick-btn-meta">Historial completo de entrenamientos</div>
+          </div>
+        </div>
+        <span>→</span>
+      </button>
+    </div>
+
+  </div>
+
   <!-- DIA 1 -->
-  <div class="day-block active" id="day-1">
+  <div class="day-block" id="day-1">
     <div class="day-title">Pre-agotamiento + Compuesto</div>
 
     <div class="card" id="card-1">
@@ -1208,6 +1460,9 @@
       if (tab.dataset.day === 'cal') {
         renderCalendar();
       }
+      if (tab.dataset.day === 'home') {
+        updateHomeStats();
+      }
     });
   });
 
@@ -1251,6 +1506,7 @@
     applyCheckedState();
     updateAllProgress();
     updateReminder();
+    updateHomeStats();
     renderCalendar();
   }
 
@@ -1267,6 +1523,94 @@
   function saveChecked() { setStorageItem('heavy-duty-checked-exercises', JSON.stringify(checkedState)); }
   function saveDayLog() { setStorageItem('heavy-duty-last-day-log', JSON.stringify(lastDayLog)); }
   function saveHistory() { setStorageItem('heavy-duty-workout-history', JSON.stringify(workoutHistory)); }
+
+  function goToDay(dayId) {
+    const allTabs = document.querySelectorAll('.tab');
+    const allBlocks = document.querySelectorAll('.day-block');
+    allTabs.forEach(t => { t.classList.remove('active'); t.setAttribute('aria-selected', 'false'); });
+    allBlocks.forEach(b => b.classList.remove('active'));
+    const targetTab = document.querySelector('.tab[data-day="' + dayId + '"]');
+    const targetBlock = document.getElementById('day-' + dayId);
+    if (targetTab) { targetTab.classList.add('active'); targetTab.setAttribute('aria-selected', 'true'); }
+    if (targetBlock) targetBlock.classList.add('active');
+    if (dayId === 'cal') renderCalendar();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function updateHomeStats() {
+    // Total sessions
+    const totalEl = document.getElementById('stat-total');
+    if (totalEl) totalEl.textContent = workoutHistory.length;
+
+    // Days since last workout
+    const restEl = document.getElementById('stat-rest');
+    const restSubEl = document.getElementById('stat-rest-sub');
+    const latestWorkout = getMostRecentWorkout();
+    if (restEl) {
+      if (latestWorkout) {
+        const gap = daysSince(latestWorkout.date);
+        restEl.textContent = gap === 0 ? 'HOY' : gap;
+        if (restSubEl) restSubEl.textContent = gap === 0 ? 'último entreno hoy' : 'días desde el último entreno';
+      } else {
+        restEl.textContent = '—';
+        if (restSubEl) restSubEl.textContent = 'sin entrenamientos aún';
+      }
+    }
+
+    // Favourite day
+    const favEl = document.getElementById('stat-fav');
+    const favSubEl = document.getElementById('stat-fav-sub');
+    if (favEl) {
+      const counts = { 1: 0, 2: 0, 3: 0 };
+      workoutHistory.forEach(w => { if (counts[w.day] !== undefined) counts[w.day]++; });
+      const maxDay = Object.keys(counts).reduce((a, b) => counts[a] > counts[b] ? a : b, '1');
+      if (workoutHistory.length > 0) {
+        favEl.textContent = 'D' + maxDay;
+        if (favSubEl) favSubEl.textContent = DAY_NAMES[maxDay] + ' (' + counts[maxDay] + ' veces)';
+      } else {
+        favEl.textContent = '—';
+        if (favSubEl) favSubEl.textContent = 'sin historial aún';
+      }
+    }
+
+    // This week
+    const weekEl = document.getElementById('stat-week');
+    if (weekEl) {
+      const today = new Date();
+      const dayOfWeek = (today.getDay() + 6) % 7; // Monday = 0
+      const startOfWeek = new Date(today);
+      startOfWeek.setDate(today.getDate() - dayOfWeek);
+      startOfWeek.setHours(0, 0, 0, 0);
+      const startISO = startOfWeek.toISOString().slice(0, 10);
+      const weekCount = workoutHistory.filter(w => w.date >= startISO).length;
+      weekEl.textContent = weekCount;
+    }
+
+    // Home reminder banner
+    const homeReminderIcon = document.getElementById('home-reminder-icon');
+    const homeReminderLabel = document.getElementById('home-reminder-label');
+    const homeReminderValue = document.getElementById('home-reminder-value');
+    const homeReminder = document.getElementById('home-reminder');
+    if (!latestWorkout) {
+      if (homeReminderIcon) homeReminderIcon.textContent = '🏁';
+      if (homeReminderLabel) homeReminderLabel.textContent = 'Sin entrenamientos registrados';
+      if (homeReminderValue) homeReminderValue.textContent = 'Completa tu primer entrenamiento para comenzar.';
+      if (homeReminder) homeReminder.style.borderColor = '';
+    } else {
+      const gap = daysSince(latestWorkout.date);
+      if (gap < 2) {
+        if (homeReminderIcon) homeReminderIcon.textContent = '😴';
+        if (homeReminderLabel) homeReminderLabel.textContent = 'En fase de descanso';
+        if (homeReminderValue) homeReminderValue.textContent = 'Descansa ' + (2 - gap) + ' día(s) más antes de tu próxima sesión.';
+        if (homeReminder) homeReminder.style.borderColor = 'rgba(239,68,68,0.4)';
+      } else {
+        if (homeReminderIcon) homeReminderIcon.textContent = '⚡';
+        if (homeReminderLabel) homeReminderLabel.textContent = '¡Listo para entrenar!';
+        if (homeReminderValue) homeReminderValue.textContent = 'Han pasado ' + gap + ' días. Tu cuerpo está recuperado.';
+        if (homeReminder) homeReminder.style.borderColor = 'rgba(245,158,11,0.5)';
+      }
+    }
+  }
 
   function toggleDone(id, btn) {
     const card = document.getElementById('card-' + id);
