@@ -1,0 +1,1026 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Guía Técnica — Heavy Duty</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #090b0e;
+    --panel: #12161f;
+    --panel-hover: #171d29;
+    --green: #10b981;
+    --green-bright: #34d399;
+    --green-dim: rgba(16, 185, 129, 0.12);
+    --green-border: rgba(16, 185, 129, 0.3);
+    --text: #f3f4f6;
+    --text-dim: #9ca3af;
+    --border: #1f2937;
+    --border-light: #2d3748;
+    --warning-bg: rgba(245, 158, 11, 0.12);
+    --warning-border: rgba(245, 158, 11, 0.4);
+    --warning-text: #fbbf24;
+    --card-radius: 14px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    padding: 0 0 40px 0;
+    -webkit-font-smoothing: antialiased;
+    max-width: 640px;
+    margin: 0 auto;
+  }
+
+  header {
+    padding: 28px 20px 20px 20px;
+    border-bottom: 1px solid var(--border);
+    position: sticky;
+    top: 0;
+    background: rgba(9, 11, 14, 0.94);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    z-index: 10;
+  }
+
+  header .eyebrow {
+    color: var(--green);
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+
+  header h1 {
+    font-size: 22px;
+    font-weight: 800;
+    line-height: 1.25;
+    letter-spacing: -0.01em;
+  }
+
+  header p {
+    color: var(--text-dim);
+    font-size: 13px;
+    margin-top: 6px;
+  }
+
+  .tabs {
+    display: flex;
+    gap: 8px;
+    padding: 16px 20px 0 20px;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .tabs::-webkit-scrollbar { display: none; }
+
+  .tab {
+    flex: 0 0 auto;
+    padding: 10px 18px;
+    border-radius: 999px;
+    border: 1px solid var(--border);
+    color: var(--text-dim);
+    font-size: 13px;
+    font-weight: 600;
+    background: var(--panel);
+    white-space: nowrap;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  .tab:hover {
+    background: var(--panel-hover);
+    color: var(--text);
+    border-color: var(--border-light);
+  }
+  .tab.active {
+    background: var(--green);
+    color: #04120d;
+    border-color: var(--green);
+    font-weight: 700;
+    box-shadow: 0 0 15px rgba(16, 185, 129, 0.25);
+  }
+
+  .reminder {
+    margin: 16px 20px 0 20px;
+    background: var(--panel);
+    border: 1px solid var(--green-border);
+    border-radius: 14px;
+    padding: 14px 16px;
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    transition: all 0.25s ease;
+  }
+  .reminder.wait-mode {
+    border-color: var(--warning-border);
+    background: rgba(23, 20, 15, 0.9);
+  }
+  .reminder .dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: var(--green);
+    flex: 0 0 auto;
+    margin-top: 4px;
+    box-shadow: 0 0 8px var(--green);
+  }
+  .reminder.wait-mode .dot {
+    background: #f59e0b;
+    box-shadow: 0 0 8px #f59e0b;
+  }
+  .reminder-text {
+    font-size: 13px;
+    color: #d1d5db;
+    line-height: 1.5;
+  }
+  .reminder-text b { color: #ffffff; }
+
+  main {
+    padding: 18px 20px 0 20px;
+  }
+
+  .day-block { display: none; }
+  .day-block.active { display: block; }
+
+  .day-title {
+    font-size: 12px;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    font-weight: 700;
+    margin: 20px 0 12px 0;
+  }
+  .day-title:first-child { margin-top: 0; }
+
+  .card {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: var(--card-radius);
+    margin-bottom: 12px;
+    overflow: hidden;
+    transition: border-color 0.2s ease, background 0.2s ease;
+  }
+  .card:hover {
+    border-color: var(--border-light);
+  }
+  .card.done {
+    opacity: 0.75;
+    border-color: rgba(31, 41, 55, 0.6);
+  }
+
+  .card-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px;
+    cursor: pointer;
+    gap: 12px;
+    user-select: none;
+  }
+
+  .card-head-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-width: 0;
+  }
+
+  .num {
+    flex: 0 0 auto;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background: var(--green-dim);
+    color: var(--green-bright);
+    font-size: 13px;
+    font-weight: 800;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid var(--green-border);
+  }
+
+  .card-head-text { min-width: 0; }
+
+  .ex-name {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--text);
+    line-height: 1.3;
+    transition: color 0.15s ease;
+  }
+  .card.done .ex-name {
+    color: #6b7280;
+    text-decoration: line-through;
+  }
+
+  .ex-meta {
+    font-size: 12px;
+    color: var(--green-bright);
+    margin-top: 3px;
+    font-weight: 600;
+  }
+  .card.done .ex-meta { color: #4b5563; }
+
+  .card-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex: 0 0 auto;
+  }
+
+  .done-toggle {
+    flex: 0 0 auto;
+    width: 28px;
+    height: 28px;
+    border-radius: 8px;
+    border: 1.5px solid var(--border-light);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: transparent;
+    font-size: 14px;
+    font-weight: 800;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    background: #0b0f17;
+  }
+  .done-toggle:hover {
+    border-color: var(--green);
+  }
+  .done-toggle.checked {
+    background: var(--green);
+    border-color: var(--green);
+    color: #04120d;
+    box-shadow: 0 0 10px rgba(16, 185, 129, 0.3);
+  }
+
+  .chevron {
+    flex: 0 0 auto;
+    color: var(--text-dim);
+    font-size: 16px;
+    transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .card.open .chevron { transform: rotate(180deg); }
+
+  .card-body {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .card.open .card-body { max-height: 1000px; }
+
+  .card-body-inner {
+    padding: 14px 16px 18px 16px;
+    border-top: 1px solid var(--border);
+    background: rgba(10, 14, 21, 0.5);
+  }
+
+  .card-body-inner p {
+    font-size: 13.5px;
+    line-height: 1.6;
+    color: #e5e7eb;
+  }
+
+  .tag-row {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    margin-top: 14px;
+  }
+
+  .tag {
+    font-size: 11px;
+    font-weight: 600;
+    padding: 5px 10px;
+    border-radius: 6px;
+    background: #181f2b;
+    color: #9ca3af;
+    border: 1px solid var(--border);
+  }
+
+  .progress-card {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: var(--card-radius);
+    padding: 16px;
+    margin-top: 20px;
+  }
+
+  .progress-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+  }
+
+  .day-progress {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-dim);
+  }
+
+  .progress-percent {
+    font-size: 12px;
+    font-weight: 800;
+    color: var(--green-bright);
+  }
+
+  .progress-bar {
+    width: 100%;
+    height: 8px;
+    background: #1a202c;
+    border-radius: 999px;
+    overflow: hidden;
+  }
+
+  .progress-fill {
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg, var(--green), var(--green-bright));
+    border-radius: 999px;
+    transition: width 0.3s ease;
+  }
+
+  .btn-group {
+    display: flex;
+    gap: 10px;
+    margin-top: 14px;
+  }
+
+  .finish-btn {
+    flex: 1;
+    padding: 13px;
+    border-radius: 10px;
+    border: none;
+    background: var(--green);
+    color: #04120d;
+    font-size: 13.5px;
+    font-weight: 800;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-family: inherit;
+  }
+  .finish-btn:hover:not(:disabled) {
+    background: var(--green-bright);
+    box-shadow: 0 0 15px rgba(16, 185, 129, 0.4);
+  }
+  .finish-btn:disabled {
+    background: #182420;
+    color: #4b5563;
+    cursor: not-allowed;
+  }
+
+  .reset-btn {
+    padding: 13px 16px;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--text-dim);
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-family: inherit;
+  }
+  .reset-btn:hover {
+    background: rgba(255, 255, 255, 0.05);
+    color: var(--text);
+    border-color: var(--border-light);
+  }
+
+  .note-strip {
+    margin: 24px 0 0 0;
+    background: rgba(16, 185, 129, 0.08);
+    border: 1px solid var(--green-border);
+    border-radius: var(--card-radius);
+    padding: 16px;
+  }
+
+  .note-strip h3 {
+    color: var(--green-bright);
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: 8px;
+    font-weight: 800;
+  }
+
+  .note-strip p {
+    color: #d1d5db;
+    font-size: 13px;
+    line-height: 1.6;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="eyebrow">Heavy Duty · Mike Mentzer</div>
+  <h1>Guía Técnica — Rutina 3 Días</h1>
+  <p>Haz clic en cada ejercicio para ver la técnica exacta</p>
+</header>
+
+<div class="tabs" role="tablist">
+  <button class="tab active" data-day="1" role="tab" aria-selected="true">Día 1 · Pecho / Espalda</button>
+  <button class="tab" data-day="2" role="tab" aria-selected="false">Día 2 · Pierna</button>
+  <button class="tab" data-day="3" role="tab" aria-selected="false">Día 3 · Hombro / Brazos</button>
+</div>
+
+<div class="reminder" id="reminder-banner">
+  <div class="dot" id="reminder-dot"></div>
+  <div class="reminder-text" id="reminder-text">Cargando estado de recuperación...</div>
+</div>
+
+<main>
+
+  <!-- DIA 1 -->
+  <div class="day-block active" id="day-1">
+    <div class="day-title">Pre-agotamiento + Compuesto</div>
+
+    <div class="card" id="card-1">
+      <div class="card-head">
+        <div class="card-head-left">
+          <div class="num">1</div>
+          <div class="card-head-text">
+            <div class="ex-name">Aperturas con mancuernas</div>
+            <div class="ex-meta">1 serie al fallo · 8-10 reps</div>
+          </div>
+        </div>
+        <div class="card-actions">
+          <div class="done-toggle" data-ex="1" onclick="event.stopPropagation(); toggleDone(1, this)" title="Marcar completado">✓</div>
+          <div class="chevron">⌄</div>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="card-body-inner">
+          <p>Acostado en banco plano, brazos extendidos hacia arriba con una ligera flexión de codo que mantienes fija durante todo el movimiento. Baja los brazos en arco hacia los lados hasta sentir estiramiento en el pecho, sube apretando el pecho en el punto alto. No dejes que los tríceps empujen el peso — el trabajo es exclusivo del pecho.</p>
+          <div class="tag-row">
+            <span class="tag">Codo fijo, ligera flexión</span>
+            <span class="tag">Contracción 1 seg arriba</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card" id="card-2">
+      <div class="card-head">
+        <div class="card-head-left">
+          <div class="num">2</div>
+          <div class="card-head-text">
+            <div class="ex-name">Press de banca</div>
+            <div class="ex-meta">Inmediato · 1 serie al fallo · 6-8 reps</div>
+          </div>
+        </div>
+        <div class="card-actions">
+          <div class="done-toggle" data-ex="2" onclick="event.stopPropagation(); toggleDone(2, this)" title="Marcar completado">✓</div>
+          <div class="chevron">⌄</div>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="card-body-inner">
+          <p>Va justo después de las aperturas, sin descanso entre medio. Agarre un poco más ancho que los hombros. Baja la barra controlada hasta rozar el pecho a la altura de los pezones, empuja explosivo pero sin perder el control. Codos a 45-60° del cuerpo — ni pegados ni totalmente abiertos.</p>
+          <div class="tag-row">
+            <span class="tag">Negativa 4 seg</span>
+            <span class="tag">Sin descanso previo</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="day-title">Espalda</div>
+
+    <div class="card" id="card-3">
+      <div class="card-head">
+        <div class="card-head-left">
+          <div class="num">3</div>
+          <div class="card-head-text">
+            <div class="ex-name">Dominadas o jalón al pecho</div>
+            <div class="ex-meta">1 serie al fallo · 6-10 reps</div>
+          </div>
+        </div>
+        <div class="card-actions">
+          <div class="done-toggle" data-ex="3" onclick="event.stopPropagation(); toggleDone(3, this)" title="Marcar completado">✓</div>
+          <div class="chevron">⌄</div>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="card-body-inner">
+          <p>Agarre prono o supinado, un poco más ancho que los hombros. Sube llevando el pecho hacia la barra, no tires solo con los brazos — piensa en llevar los codos hacia atrás y abajo. Baja controlado hasta una extensión casi completa.</p>
+          <div class="tag-row">
+            <span class="tag">Pecho hacia la barra</span>
+            <span class="tag">Rango completo</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card" id="card-4">
+      <div class="card-head">
+        <div class="card-head-left">
+          <div class="num">4</div>
+          <div class="card-head-text">
+            <div class="ex-name">Remo en máquina + isometría</div>
+            <div class="ex-meta">1 serie al fallo · 6-10 reps + iso 10-15 seg</div>
+          </div>
+        </div>
+        <div class="card-actions">
+          <div class="done-toggle" data-ex="4" onclick="event.stopPropagation(); toggleDone(4, this)" title="Marcar completado">✓</div>
+          <div class="chevron">⌄</div>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="card-body-inner">
+          <p>Espalda recta, pecho apoyado si la máquina lo permite. Tira llevando los codos hacia atrás, aprieta los omóplatos al final del recorrido, vuelve controlado sin dejar que el peso te jale de golpe. En la última repetición, aguanta en el punto de máxima contracción sin moverte — esa es la isometría.</p>
+          <div class="tag-row">
+            <span class="tag">Isometría al final</span>
+            <span class="tag">Vuelta controlada</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="progress-card">
+      <div class="progress-info">
+        <div class="day-progress" id="progress-1">0 de 4 ejercicios completados</div>
+        <div class="progress-percent" id="percent-1">0%</div>
+      </div>
+      <div class="progress-bar">
+        <div class="progress-fill" id="fill-1"></div>
+      </div>
+      <div class="btn-group">
+        <button class="reset-btn" onclick="resetDay(1)">Reiniciar</button>
+        <button class="finish-btn" id="finish-1" disabled onclick="finishDay(1)">Marcar Día 1 como completado</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- DIA 2 -->
+  <div class="day-block" id="day-2">
+    <div class="day-title">Pre-agotamiento + Compuesto</div>
+
+    <div class="card" id="card-5">
+      <div class="card-head">
+        <div class="card-head-left">
+          <div class="num">1</div>
+          <div class="card-head-text">
+            <div class="ex-name">Extensión de cuádriceps</div>
+            <div class="ex-meta">1 serie al fallo · 10-12 reps</div>
+          </div>
+        </div>
+        <div class="card-actions">
+          <div class="done-toggle" data-ex="5" onclick="event.stopPropagation(); toggleDone(5, this)" title="Marcar completado">✓</div>
+          <div class="chevron">⌄</div>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="card-body-inner">
+          <p>Siéntate con la almohadilla apoyada sobre los tobillos. Sube hasta la extensión completa apretando el cuádriceps 1 segundo arriba, baja controlado durante 4 segundos. Es el ejercicio de pre-agotamiento antes de la sentadilla o prensa.</p>
+          <div class="tag-row">
+            <span class="tag">Negativa 4 seg</span>
+            <span class="tag">Aprieta arriba</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card" id="card-6">
+      <div class="card-head">
+        <div class="card-head-left">
+          <div class="num">2</div>
+          <div class="card-head-text">
+            <div class="ex-name">Sentadilla o prensa</div>
+            <div class="ex-meta">Inmediato · 1 serie al fallo · 6-8 reps</div>
+          </div>
+        </div>
+        <div class="card-actions">
+          <div class="done-toggle" data-ex="6" onclick="event.stopPropagation(); toggleDone(6, this)" title="Marcar completado">✓</div>
+          <div class="chevron">⌄</div>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="card-body-inner">
+          <p><strong>Sentadilla:</strong> pies al ancho de los hombros, baja como si te sentaras en una silla, rodillas siguiendo la dirección de los pies, hasta que los muslos queden paralelos al suelo o un poco más abajo.<br><br><strong>Prensa:</strong> pies en la plataforma al ancho de los hombros, baja controlado sin que las rodillas se cierren hacia adentro.</p>
+          <div class="tag-row">
+            <span class="tag">Sin descanso previo</span>
+            <span class="tag">Rodillas alineadas</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="day-title">Isquiotibiales / Gemelos</div>
+
+    <div class="card" id="card-7">
+      <div class="card-head">
+        <div class="card-head-left">
+          <div class="num">3</div>
+          <div class="card-head-text">
+            <div class="ex-name">Peso muerto rumano</div>
+            <div class="ex-meta">1 serie al fallo · 6-8 reps</div>
+          </div>
+        </div>
+        <div class="card-actions">
+          <div class="done-toggle" data-ex="7" onclick="event.stopPropagation(); toggleDone(7, this)" title="Marcar completado">✓</div>
+          <div class="chevron">⌄</div>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="card-body-inner">
+          <p>Barra o mancuernas frente a los muslos, rodillas con flexión mínima casi fija. Baja el peso deslizándolo pegado a las piernas mientras empujas la cadera hacia atrás. Debes sentir el estiramiento en los isquiotibiales, no en la zona lumbar. Sube apretando los glúteos.</p>
+          <div class="tag-row">
+            <span class="tag">Peso pegado a las piernas</span>
+            <span class="tag">Cadera hacia atrás</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card" id="card-8">
+      <div class="card-head">
+        <div class="card-head-left">
+          <div class="num">4</div>
+          <div class="card-head-text">
+            <div class="ex-name">Elevación de talones + isometría</div>
+            <div class="ex-meta">1 serie al fallo · 10-12 reps + iso 15-20 seg</div>
+          </div>
+        </div>
+        <div class="card-actions">
+          <div class="done-toggle" data-ex="8" onclick="event.stopPropagation(); toggleDone(8, this)" title="Marcar completado">✓</div>
+          <div class="chevron">⌄</div>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="card-body-inner">
+          <p>De pie o en máquina, sube en la punta de los pies lo más alto posible, aguanta 2 segundos arriba, baja controlado hasta sentir el estiramiento en las pantorrillas. En la última repetición, mantén la posición alta como isometría final.</p>
+          <div class="tag-row">
+            <span class="tag">Pausa 2 seg arriba</span>
+            <span class="tag">Estiramiento abajo</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="progress-card">
+      <div class="progress-info">
+        <div class="day-progress" id="progress-2">0 de 4 ejercicios completados</div>
+        <div class="progress-percent" id="percent-2">0%</div>
+      </div>
+      <div class="progress-bar">
+        <div class="progress-fill" id="fill-2"></div>
+      </div>
+      <div class="btn-group">
+        <button class="reset-btn" onclick="resetDay(2)">Reiniciar</button>
+        <button class="finish-btn" id="finish-2" disabled onclick="finishDay(2)">Marcar Día 2 como completado</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- DIA 3 -->
+  <div class="day-block" id="day-3">
+    <div class="day-title">Pre-agotamiento + Compuesto</div>
+
+    <div class="card" id="card-9">
+      <div class="card-head">
+        <div class="card-head-left">
+          <div class="num">1</div>
+          <div class="card-head-text">
+            <div class="ex-name">Elevaciones laterales</div>
+            <div class="ex-meta">1 serie al fallo · 10-12 reps</div>
+          </div>
+        </div>
+        <div class="card-actions">
+          <div class="done-toggle" data-ex="9" onclick="event.stopPropagation(); toggleDone(9, this)" title="Marcar completado">✓</div>
+          <div class="chevron">⌄</div>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="card-body-inner">
+          <p>Mancuernas a los lados del cuerpo, sube los brazos hacia los lados hasta la altura de los hombros — no más arriba. Codos con ligera flexión fija. Sin impulso del cuerpo: si necesitas balancearte para subir el peso, el peso es excesivo.</p>
+          <div class="tag-row">
+            <span class="tag">Sin impulso</span>
+            <span class="tag">Hasta la altura del hombro</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card" id="card-10">
+      <div class="card-head">
+        <div class="card-head-left">
+          <div class="num">2</div>
+          <div class="card-head-text">
+            <div class="ex-name">Press militar</div>
+            <div class="ex-meta">Inmediato · 1 serie al fallo · 6-8 reps</div>
+          </div>
+        </div>
+        <div class="card-actions">
+          <div class="done-toggle" data-ex="10" onclick="event.stopPropagation(); toggleDone(10, this)" title="Marcar completado">✓</div>
+          <div class="chevron">⌄</div>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="card-body-inner">
+          <p>De pie o sentado, barra o mancuernas a la altura de los hombros. Empuja hacia arriba hasta la extensión completa sin arquear la espalda en exceso. Baja de forma controlada.</p>
+          <div class="tag-row">
+            <span class="tag">Sin descanso previo</span>
+            <span class="tag">Espalda neutra</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="day-title">Brazos & Salud Articular</div>
+
+    <div class="card" id="card-11">
+      <div class="card-head">
+        <div class="card-head-left">
+          <div class="num">3</div>
+          <div class="card-head-text">
+            <div class="ex-name">Curl con barra</div>
+            <div class="ex-meta">1 serie al fallo · 6-8 reps</div>
+          </div>
+        </div>
+        <div class="card-actions">
+          <div class="done-toggle" data-ex="11" onclick="event.stopPropagation(); toggleDone(11, this)" title="Marcar completado">✓</div>
+          <div class="chevron">⌄</div>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="card-body-inner">
+          <p>Codos pegados al torso — no se mueven durante todo el ejercicio. Sube la barra apretando el bíceps, controla la bajada durante 3-4 segundos sin dejar que el peso caiga de golpe.</p>
+          <div class="tag-row">
+            <span class="tag">Codos fijos</span>
+            <span class="tag">Negativa 3-4 seg</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card" id="card-12">
+      <div class="card-head">
+        <div class="card-head-left">
+          <div class="num">4</div>
+          <div class="card-head-text">
+            <div class="ex-name">Extensión de tríceps en polea</div>
+            <div class="ex-meta">1 serie al fallo · 6-8 reps</div>
+          </div>
+        </div>
+        <div class="card-actions">
+          <div class="done-toggle" data-ex="12" onclick="event.stopPropagation(); toggleDone(12, this)" title="Marcar completado">✓</div>
+          <div class="chevron">⌄</div>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="card-body-inner">
+          <p>Codos pegados al cuerpo, empuja la cuerda o barra hacia abajo hasta la extensión completa, realiza una pausa de 1 segundo, sube de forma controlada sin separar los codos del torso.</p>
+          <div class="tag-row">
+            <span class="tag">Pausa 1 seg abajo</span>
+            <span class="tag">Codos pegados</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card" id="card-13">
+      <div class="card-head">
+        <div class="card-head-left">
+          <div class="num">5</div>
+          <div class="card-head-text">
+            <div class="ex-name">Rotación externa / interna de hombro</div>
+            <div class="ex-meta">1 serie · 12-15 reps · con banda</div>
+          </div>
+        </div>
+        <div class="card-actions">
+          <div class="done-toggle" data-ex="13" onclick="event.stopPropagation(); toggleDone(13, this)" title="Marcar completado">✓</div>
+          <div class="chevron">⌄</div>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="card-body-inner">
+          <p>Codo pegado al cuerpo, flexionado a 90°. Gira el antebrazo alejándolo del cuerpo (rotación externa) o acercándolo (rotación interna) contra la resistencia de la banda. Movimiento lento y controlado, usando únicamente la articulación del hombro.</p>
+          <div class="tag-row">
+            <span class="tag">Mantenimiento articular</span>
+            <span class="tag">Clave para manguito rotador</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="progress-card">
+      <div class="progress-info">
+        <div class="day-progress" id="progress-3">0 de 5 ejercicios completados</div>
+        <div class="progress-percent" id="percent-3">0%</div>
+      </div>
+      <div class="progress-bar">
+        <div class="progress-fill" id="fill-3"></div>
+      </div>
+      <div class="btn-group">
+        <button class="reset-btn" onclick="resetDay(3)">Reiniciar</button>
+        <button class="finish-btn" id="finish-3" disabled onclick="finishDay(3)">Marcar Día 3 como completado</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="note-strip">
+    <h3>Principio Heavy Duty</h3>
+    <p>Llega al fallo muscular real en cada serie de trabajo. Prioriza la fase negativa (bajada lenta de 4 segundos), pues es la que estimula mayor adaptación y fortalece tendones. Entrena solo cuando estés 100% recuperado, nunca por calendario fijo.</p>
+  </div>
+
+</main>
+
+<script>
+  // Tab handling
+  const tabs = document.querySelectorAll('.tab');
+  const blocks = document.querySelectorAll('.day-block');
+
+  tabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+      tabs.forEach(t => {
+        t.classList.remove('active');
+        t.setAttribute('aria-selected', 'false');
+      });
+      blocks.forEach(b => b.classList.remove('active'));
+      tab.classList.add('active');
+      tab.setAttribute('aria-selected', 'true');
+      const targetBlock = document.getElementById('day-' + tab.dataset.day);
+      if (targetBlock) targetBlock.classList.add('active');
+    });
+  });
+
+  // Accordion handling
+  document.querySelectorAll('.card-head').forEach(head => {
+    head.addEventListener('click', () => {
+      const card = head.closest('.card');
+      if (card) card.classList.toggle('open');
+    });
+  });
+
+  // ---- State & Storage Management (Standard localStorage) ----
+  const DAY_EXERCISES = { 1: [1,2,3,4], 2: [5,6,7,8], 3: [9,10,11,12,13] };
+  let checkedState = {};   // { "1": true/false, ... }
+  let lastDayLog = {};     // { "1": "YYYY-MM-DD", "2": "...", "3": "..." }
+
+  function getStorageItem(key) {
+    try {
+      return localStorage.getItem(key);
+    } catch (e) {
+      console.warn('localStorage no disponible:', e);
+      return null;
+    }
+  }
+
+  function setStorageItem(key, val) {
+    try {
+      localStorage.setItem(key, val);
+    } catch (e) {
+      console.warn('No se pudo guardar en localStorage:', e);
+    }
+  }
+
+  function loadState() {
+    const rawChecked = getStorageItem('heavy-duty-checked-exercises');
+    checkedState = rawChecked ? JSON.parse(rawChecked) : {};
+
+    const rawLog = getStorageItem('heavy-duty-last-day-log');
+    lastDayLog = rawLog ? JSON.parse(rawLog) : {};
+
+    applyCheckedState();
+    updateAllProgress();
+    updateReminder();
+  }
+
+  function applyCheckedState() {
+    Object.keys(checkedState).forEach(id => {
+      const isDone = !!checkedState[id];
+      const card = document.getElementById('card-' + id);
+      const btn = document.querySelector('.done-toggle[data-ex="' + id + '"]');
+      if (card) card.classList.toggle('done', isDone);
+      if (btn) btn.classList.toggle('checked', isDone);
+    });
+  }
+
+  function saveChecked() {
+    setStorageItem('heavy-duty-checked-exercises', JSON.stringify(checkedState));
+  }
+
+  function saveDayLog() {
+    setStorageItem('heavy-duty-last-day-log', JSON.stringify(lastDayLog));
+  }
+
+  function toggleDone(id, btn) {
+    const card = document.getElementById('card-' + id);
+    const isChecked = btn.classList.toggle('checked');
+    if (card) card.classList.toggle('done', isChecked);
+    checkedState[id] = isChecked;
+    saveChecked();
+    updateAllProgress();
+  }
+
+  function updateAllProgress() {
+    Object.keys(DAY_EXERCISES).forEach(day => {
+      const ids = DAY_EXERCISES[day];
+      const doneCount = ids.filter(id => checkedState[id]).length;
+      const total = ids.length;
+      const percent = Math.round((doneCount / total) * 100);
+
+      const progEl = document.getElementById('progress-' + day);
+      const percentEl = document.getElementById('percent-' + day);
+      const fillEl = document.getElementById('fill-' + day);
+      const btnEl = document.getElementById('finish-' + day);
+
+      if (progEl) progEl.textContent = doneCount + ' de ' + total + ' ejercicios completados';
+      if (percentEl) percentEl.textContent = percent + '%';
+      if (fillEl) fillEl.style.width = percent + '%';
+      if (btnEl) btnEl.disabled = doneCount < total;
+    });
+  }
+
+  function finishDay(day) {
+    const todayISO = new Date().toISOString().slice(0, 10);
+    lastDayLog[day] = todayISO;
+    saveDayLog();
+
+    // Reset day's checkboxes for next session
+    DAY_EXERCISES[day].forEach(id => {
+      checkedState[id] = false;
+      const card = document.getElementById('card-' + id);
+      const btn = document.querySelector('.done-toggle[data-ex="' + id + '"]');
+      if (card) card.classList.remove('done');
+      if (btn) btn.classList.remove('checked');
+    });
+    saveChecked();
+    updateAllProgress();
+    updateReminder();
+
+    const btnEl = document.getElementById('finish-' + day);
+    if (btnEl) {
+      btnEl.textContent = '¡Día ' + day + ' registrado con éxito!';
+      setTimeout(() => {
+        btnEl.textContent = 'Marcar Día ' + day + ' como completado';
+        btnEl.disabled = true;
+      }, 2000);
+    }
+  }
+
+  function resetDay(day) {
+    DAY_EXERCISES[day].forEach(id => {
+      checkedState[id] = false;
+      const card = document.getElementById('card-' + id);
+      const btn = document.querySelector('.done-toggle[data-ex="' + id + '"]');
+      if (card) card.classList.remove('done');
+      if (btn) btn.classList.remove('checked');
+    });
+    saveChecked();
+    updateAllProgress();
+  }
+
+  function daysSince(dateStr) {
+    const then = new Date(dateStr + 'T00:00:00');
+    const now = new Date();
+    const diffMs = now - then;
+    return Math.floor(diffMs / (1000 * 60 * 60 * 24));
+  }
+
+  function updateReminder() {
+    const bannerEl = document.getElementById('reminder-banner');
+    const textEl = document.getElementById('reminder-text');
+    const entries = Object.entries(lastDayLog);
+
+    if (entries.length === 0) {
+      bannerEl.classList.remove('wait-mode');
+      textEl.innerHTML = '<b>Aún no registras ningún entrenamiento.</b> Empieza cuando quieras: marca los ejercicios y pulsa "completado" al finalizar la sesión.';
+      return;
+    }
+
+    // Find the most recently completed day overall
+    let lastDay = null, lastDate = null;
+    entries.forEach(([day, date]) => {
+      if (!lastDate || date > lastDate) { lastDate = date; lastDay = day; }
+    });
+
+    const gap = daysSince(lastDate);
+    const MIN_REST = 2; // Heavy Duty: mínimo 48 horas (2 días completos)
+
+    if (gap < MIN_REST) {
+      bannerEl.classList.add('wait-mode');
+      const restante = MIN_REST - gap;
+      textEl.innerHTML = 'Último entreno: <b>Día ' + lastDay + '</b> (hace ' + (gap === 0 ? 'hoy' : gap + ' día(s)') + '). Descansa al menos ' + restante + ' día(s) más — la hipertrofia y adaptación ocurren en el descanso, no en el gimnasio.';
+    } else {
+      bannerEl.classList.remove('wait-mode');
+      textEl.innerHTML = 'Último entreno: <b>Día ' + lastDay + '</b> (hace ' + gap + ' días). Cumpliste el descanso mínimo. Si te sientes completamente recuperado, ¡puedes entrenar hoy!';
+    }
+  }
+
+  // Initialize on load
+  loadState();
+</script>
+
+</body>
+</html>
