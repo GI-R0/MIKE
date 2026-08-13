@@ -48,7 +48,7 @@
     }
 
     header {
-      padding: 30px 20px 20px 20px;
+      padding: 34px 20px 24px 20px;
       border-bottom: 1px solid var(--gold-border);
       position: sticky;
       top: 0;
@@ -66,7 +66,7 @@
       font-weight: 700;
       letter-spacing: 0.25em;
       text-transform: uppercase;
-      margin-bottom: 8px;
+      margin-bottom: 12px;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -86,17 +86,18 @@
       font-family: var(--font-heading);
       font-size: 24px;
       font-weight: 700;
-      line-height: 1.2;
+      line-height: 1.28;
       letter-spacing: 0.05em;
       color: var(--text);
-      margin-top: 4px;
+      margin-top: 0;
+      margin-bottom: 10px;
     }
 
     header p {
       color: var(--text-dim);
       font-size: 12px;
       letter-spacing: 0.05em;
-      margin-top: 6px;
+      margin-top: 0;
       text-transform: uppercase;
     }
 
@@ -104,7 +105,7 @@
       display: flex;
       flex-wrap: wrap;
       gap: 8px;
-      padding: 14px 16px 0 16px;
+      padding: 18px 16px 0 16px;
     }
 
     .tab {
@@ -140,10 +141,28 @@
     }
 
     @media (max-width: 540px) {
+      header {
+        padding: 30px 16px 22px 16px;
+      }
+
+      header .club-logo {
+        margin-bottom: 10px;
+        letter-spacing: 0.2em;
+      }
+
+      header h1 {
+        font-size: 22px;
+        margin-bottom: 8px;
+      }
+
+      header p {
+        font-size: 11px;
+      }
+
       .tabs {
         flex-wrap: wrap;
         overflow: visible;
-        margin: 14px 16px 0 16px;
+        margin: 18px 16px 0 16px;
         padding: 10px;
         border: 1px solid var(--border);
         border-radius: 14px;
