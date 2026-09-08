@@ -86,3 +86,18 @@ la carpeta raíz del repositorio.
 - `index.html`: entrada recomendada para GitHub Pages.
 - `guia_tecnica_heavy_duty.html`: guía técnica y tracker en un único archivo.
 - `guia_tecnica_heavy_duty (1).html`: copia alternativa del documento.
+
+## Funciones actuales
+
+- **PWA instalable:** `manifest.json`, `service-worker.js` e `icon.svg` permiten
+  instalar la app y consultar el shell básico sin conexión cuando se sirve por
+  HTTPS o desde un servidor local.
+- **Progresión visual:** cada ejercicio incluye un gráfico Canvas de peso frente
+  a los registros guardados.
+- **Historial editable:** cada registro de serie se puede editar o borrar.
+- **Backup:** los botones de exportar e importar gestionan un JSON completo con
+  progreso, sesiones, historial, preferencias y secuencia actual.
+- **Unidades:** los pesos se guardan internamente en kg y se muestran en kg o lb.
+- **Tema:** alternancia manual entre modo oscuro y claro.
+- **Módulos estáticos:** los datos viven en `js/data.js` y el acceso al
+  almacenamiento en `js/storage.js`, sin dependencias ni build step.
