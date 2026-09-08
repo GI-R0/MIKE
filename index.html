@@ -192,7 +192,8 @@
     }
 
     .tabs {
-      flex-wrap: wrap;
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
       overflow: visible;
       margin: 20px 16px 0 16px;
       padding: 10px;
@@ -202,13 +203,21 @@
     }
 
     .tab {
-      flex: 1 1 calc(50% - 8px);
+      width: 100%;
       min-width: 0;
-      padding: 10px 12px;
-      font-size: 11px;
+      min-height: 48px;
+      padding: 8px 5px;
+      font-size: 10px;
       letter-spacing: 0.03em;
       text-align: center;
     }
+
+    .tab[data-day="cal"] { grid-column: span 2; }
+
+    .tools-panel { margin: 0 16px 16px; }
+    .tools-actions { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .tools-unit { min-width: 0; }
+    .tools-unit select { min-width: 0; flex: 1; }
   }
 
   @media (max-width: 380px) {
@@ -663,7 +672,6 @@
   }
 
   @media (max-width: 420px) {
-    .tools-actions { grid-template-columns: 1fr; }
     .failure-options { grid-template-columns: 1fr; }
   }
 
