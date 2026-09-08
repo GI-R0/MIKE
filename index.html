@@ -423,6 +423,107 @@
     border: 1px solid var(--border);
   }
 
+  .set-tracker {
+    margin-top: 18px;
+    padding-top: 16px;
+    border-top: 1px solid var(--border);
+  }
+
+  .set-tracker-title {
+    color: var(--gold-bright);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+
+  .set-inputs {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+
+  .set-inputs label {
+    color: var(--text-dim);
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+
+  .set-inputs input {
+    width: 100%;
+    margin-top: 5px;
+    padding: 10px;
+    border: 1px solid var(--border-light);
+    border-radius: 8px;
+    background: #080a0e;
+    color: var(--text);
+    font: inherit;
+    font-size: 14px;
+  }
+
+  .failure-options {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 6px;
+    margin-top: 10px;
+  }
+
+  .failure-btn {
+    min-height: 44px;
+    padding: 6px;
+    border: 1px solid var(--border-light);
+    border-radius: 8px;
+    background: transparent;
+    color: var(--text-dim);
+    cursor: pointer;
+    font: inherit;
+    font-size: 10px;
+  }
+
+  .failure-btn:hover, .failure-btn.selected {
+    border-color: var(--gold);
+    color: var(--gold-bright);
+    background: var(--gold-dim);
+  }
+
+  .record-set-btn {
+    width: 100%;
+    min-height: 44px;
+    margin-top: 10px;
+    border: 1px solid var(--gold-border);
+    border-radius: 8px;
+    background: var(--gold-dim);
+    color: var(--gold-bright);
+    cursor: pointer;
+    font: inherit;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .record-set-btn:hover {
+    background: rgba(212, 175, 55, 0.16);
+    border-color: var(--gold);
+  }
+
+  .set-feedback {
+    min-height: 18px;
+    margin-top: 9px;
+    color: var(--text-dim);
+    font-size: 11px;
+    line-height: 1.45;
+  }
+
+  .set-history {
+    margin-top: 8px;
+    color: #8f96a3;
+    font-size: 11px;
+    line-height: 1.5;
+  }
+
   .progress-card {
     background: var(--panel);
     border: 1px solid var(--border);
@@ -1609,6 +1710,10 @@
       const targetBlock = document.getElementById('day-' + tab.dataset.day);
       if (targetBlock) targetBlock.classList.add('active');
 
+      if (tab.dataset.day === '1' || tab.dataset.day === '2' || tab.dataset.day === '3') {
+        resumeDay(tab.dataset.day);
+      }
+
       if (tab.dataset.day === 'cal') {
         renderCalendar();
       }
@@ -1663,12 +1768,29 @@
   });
 
   // ---- State & Storage Management ----
+  const EXERCISES = [
+    { id: 1, day: 1, name: 'Aperturas en banco plano', repMin: 8, repMax: 12 },
+    { id: 2, day: 1, name: 'Press de banca', repMin: 6, repMax: 8 },
+    { id: 3, day: 1, name: 'Dominadas o jalon al pecho', repMin: 6, repMax: 10 },
+    { id: 4, day: 1, name: 'Remo en maquina + isometria', repMin: 6, repMax: 10 },
+    { id: 5, day: 2, name: 'Extension de cuadriceps', repMin: 8, repMax: 12 },
+    { id: 6, day: 2, name: 'Prensa o sentadilla', repMin: 6, repMax: 10 },
+    { id: 7, day: 2, name: 'Peso muerto rumano', repMin: 6, repMax: 10 },
+    { id: 8, day: 2, name: 'Elevacion de talones', repMin: 10, repMax: 15 },
+    { id: 9, day: 3, name: 'Elevaciones laterales', repMin: 8, repMax: 12 },
+    { id: 10, day: 3, name: 'Press militar', repMin: 6, repMax: 10 },
+    { id: 11, day: 3, name: 'Curl de biceps', repMin: 6, repMax: 10 },
+    { id: 12, day: 3, name: 'Extension de triceps', repMin: 6, repMax: 10 },
+    { id: 13, day: 3, name: 'Rotacion de manguito rotador', repMin: 10, repMax: 15 }
+  ];
   const DAY_EXERCISES = { 1: [1,2,3,4], 2: [5,6,7,8], 3: [9,10,11,12,13] };
   const DAY_NAMES = { 1: "Pecho / Espalda", 2: "Pierna", 3: "Hombro / Brazos" };
 
   let checkedState = {};    // { "1": true/false, ... }
   let lastDayLog = {};      // { "1": "YYYY-MM-DD", ... }
   let workoutHistory = [];  // [ { id: number, day: number, date: "YYYY-MM-DD" }, ... ]
+  let exerciseHistory = {}; // { "1": [ { weight, reps, failure, date }, ... ] }
+  let lastExerciseByDay = {}; // { "1": exerciseId, ... }
   let selectedModalDateISO = null;
 
   let currentCalDate = new Date();
@@ -1711,6 +1833,26 @@
       }));
   }
 
+  function normalizeExerciseHistory(value) {
+    if (!isPlainObject(value)) return {};
+    const normalized = {};
+    EXERCISES.forEach(exercise => {
+      const entries = Array.isArray(value[exercise.id]) ? value[exercise.id] : [];
+      normalized[exercise.id] = entries.filter(item => {
+        return isPlainObject(item) && Number.isFinite(Number(item.weight)) && Number(item.weight) > 0
+          && Number.isInteger(Number(item.reps)) && Number(item.reps) > 0
+          && ['excess', 'justo', 'temprano'].includes(item.failure)
+          && typeof item.date === 'string';
+      }).slice(0, 8).map(item => ({
+        weight: Number(item.weight),
+        reps: Number(item.reps),
+        failure: item.failure,
+        date: item.date
+      }));
+    });
+    return normalized;
+  }
+
   function loadState() {
     const rawChecked = getStorageItem('heavy-duty-checked-exercises');
     const parsedChecked = safeParseJSON(rawChecked, {});
@@ -1724,6 +1866,14 @@
     const parsedHistory = safeParseJSON(rawHist, []);
     workoutHistory = normalizeWorkoutHistory(parsedHistory);
 
+    const rawExerciseHistory = getStorageItem('exercise-history');
+    exerciseHistory = normalizeExerciseHistory(safeParseJSON(rawExerciseHistory, {}));
+
+    const rawLastExercise = getStorageItem('heavy-duty-last-exercise-by-day');
+    const parsedLastExercise = safeParseJSON(rawLastExercise, {});
+    lastExerciseByDay = isPlainObject(parsedLastExercise) ? parsedLastExercise : {};
+
+    renderExerciseTrackers();
     applyCheckedState();
     updateAllProgress();
     updateReminder();
@@ -1747,6 +1897,91 @@
   function saveChecked() { setStorageItem('heavy-duty-checked-exercises', JSON.stringify(checkedState)); }
   function saveDayLog() { setStorageItem('heavy-duty-last-day-log', JSON.stringify(lastDayLog)); }
   function saveHistory() { setStorageItem('heavy-duty-workout-history', JSON.stringify(workoutHistory)); }
+  function saveExerciseHistory() { setStorageItem('exercise-history', JSON.stringify(exerciseHistory)); }
+  function saveLastExerciseByDay() { setStorageItem('heavy-duty-last-exercise-by-day', JSON.stringify(lastExerciseByDay)); }
+
+  function getExercise(id) {
+    return EXERCISES.find(exercise => exercise.id === Number(id));
+  }
+
+  function renderExerciseTrackers() {
+    EXERCISES.forEach(exercise => {
+      const cardBody = document.querySelector('#card-' + exercise.id + ' .card-body-inner');
+      if (!cardBody || cardBody.querySelector('.set-tracker')) return;
+      const tracker = document.createElement('div');
+      tracker.className = 'set-tracker';
+      tracker.innerHTML = `
+        <div class="set-tracker-title">Registrar serie de trabajo · ${exercise.repMin}-${exercise.repMax} reps</div>
+        <div class="set-inputs">
+          <label>Peso (kg)<input id="weight-${exercise.id}" type="number" min="0.1" max="1000" step="0.1" inputmode="decimal" aria-label="Peso en kilogramos"></label>
+          <label>Reps<input id="reps-${exercise.id}" type="number" min="1" max="100" step="1" inputmode="numeric" aria-label="Repeticiones"></label>
+        </div>
+        <div class="failure-options" role="group" aria-label="Como fue el fallo">
+          <button type="button" class="failure-btn" data-failure="excess" onclick="selectFailure(${exercise.id}, 'excess', this)">Sobro reps</button>
+          <button type="button" class="failure-btn" data-failure="justo" onclick="selectFailure(${exercise.id}, 'justo', this)">Fallo justo</button>
+          <button type="button" class="failure-btn" data-failure="temprano" onclick="selectFailure(${exercise.id}, 'temprano', this)">Fallo temprano</button>
+        </div>
+        <button type="button" class="record-set-btn" onclick="recordSet(${exercise.id})">Guardar serie al fallo</button>
+        <div class="set-feedback" id="set-feedback-${exercise.id}" aria-live="polite"></div>
+        <div class="set-history" id="set-history-${exercise.id}"></div>
+      `;
+      cardBody.appendChild(tracker);
+      renderExerciseHistory(exercise.id);
+    });
+  }
+
+  function selectFailure(id, failure, button) {
+    const tracker = button.closest('.set-tracker');
+    tracker.querySelectorAll('.failure-btn').forEach(option => option.classList.remove('selected'));
+    button.classList.add('selected');
+    tracker.dataset.failure = failure;
+  }
+
+  function getProgression(weight, failure) {
+    if (failure === 'excess') {
+      const increase = weight < 50 ? 2.5 : 5;
+      return 'Sugerencia: subir ' + increase + '% a ' + (weight * (1 + increase / 100)).toFixed(1) + ' kg.';
+    }
+    if (failure === 'temprano') return 'Sugerencia: bajar 10% a ' + (weight * 0.9).toFixed(1) + ' kg.';
+    return 'Sugerencia: mantener ' + weight.toFixed(1) + ' kg.';
+  }
+
+  function recordSet(id) {
+    const exercise = getExercise(id);
+    const tracker = document.querySelector('#card-' + id + ' .set-tracker');
+    const weight = Number(document.getElementById('weight-' + id).value);
+    const reps = Number(document.getElementById('reps-' + id).value);
+    const failure = tracker && tracker.dataset.failure;
+    const feedback = document.getElementById('set-feedback-' + id);
+
+    if (!Number.isFinite(weight) || weight <= 0 || weight > 1000 || !Number.isInteger(reps) || reps < 1 || reps > 100) {
+      feedback.textContent = 'Introduce un peso mayor que 0 y entre 1 y 100 repeticiones.';
+      return;
+    }
+    if (!failure) {
+      feedback.textContent = 'Selecciona como fue el fallo antes de guardar.';
+      return;
+    }
+
+    const entry = { weight, reps, failure, date: new Date().toISOString().slice(0, 10) };
+    exerciseHistory[id] = [entry, ...(exerciseHistory[id] || [])].slice(0, 8);
+    saveExerciseHistory();
+    feedback.textContent = getProgression(weight, failure);
+    renderExerciseHistory(id);
+    document.getElementById('weight-' + id).value = '';
+    document.getElementById('reps-' + id).value = '';
+    tracker.dataset.failure = '';
+    tracker.querySelectorAll('.failure-btn').forEach(option => option.classList.remove('selected'));
+  }
+
+  function renderExerciseHistory(id) {
+    const historyEl = document.getElementById('set-history-' + id);
+    const entries = exerciseHistory[id] || [];
+    if (!historyEl) return;
+    historyEl.innerHTML = entries.length
+      ? 'Ultimos registros: ' + entries.slice(0, 4).map(entry => `${entry.weight} kg x ${entry.reps} (${entry.failure})`).join(' · ')
+      : 'Sin registros todavía.';
+  }
 
   function goToDay(dayId) {
     const allTabs = document.querySelectorAll('.tab');
@@ -1757,6 +1992,7 @@
     const targetBlock = document.getElementById('day-' + dayId);
     if (targetTab) { targetTab.classList.add('active'); targetTab.setAttribute('aria-selected', 'true'); }
     if (targetBlock) targetBlock.classList.add('active');
+    if (dayId === '1' || dayId === '2' || dayId === '3') resumeDay(dayId);
     if (dayId === 'cal') renderCalendar();
     if (dayId === 'home') updateHomeStats();
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -1843,8 +2079,30 @@
     if (card) card.classList.toggle('done', isChecked);
     btn.setAttribute('aria-pressed', isChecked ? 'true' : 'false');
     checkedState[id] = isChecked;
+    const exercise = getExercise(id);
+    if (exercise && isChecked) {
+      lastExerciseByDay[exercise.day] = id;
+      saveLastExerciseByDay();
+    }
     saveChecked();
     updateAllProgress();
+  }
+
+  function resumeDay(dayId) {
+    const ids = DAY_EXERCISES[dayId];
+    if (!ids) return;
+    const lastId = Number(lastExerciseByDay[dayId]);
+    const lastIndex = ids.indexOf(lastId);
+    const nextId = ids.find((id, index) => !checkedState[id] && index > lastIndex)
+      || ids.find(id => !checkedState[id])
+      || ids[0];
+    const card = document.getElementById('card-' + nextId);
+    if (!card) return;
+    document.querySelectorAll('#day-' + dayId + ' .card.open').forEach(openCard => {
+      if (openCard !== card) openCard.classList.remove('open');
+    });
+    card.classList.add('open');
+    setTimeout(() => card.scrollIntoView({ behavior: 'smooth', block: 'center' }), 80);
   }
 
   function updateAllProgress() {
@@ -1892,6 +2150,8 @@
         btn.setAttribute('aria-pressed', 'false');
       }
     });
+    delete lastExerciseByDay[day];
+    saveLastExerciseByDay();
     saveChecked();
     updateAllProgress();
     updateReminder();
